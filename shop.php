@@ -4,7 +4,7 @@ include 'session.php';
 session_start();
 
 // Check if the token from the cookie matches the session token
-if (!check_session() || $_SESSION !== 'customer') {
+if (!check_session() || $_SESSION['role'] !== 'customer') {
     header("Location: login.php");
     exit();
 } 

@@ -45,14 +45,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
             if ($result->num_rows > 0) {
                 $session = $result->fetch_assoc();
-                $stmt = $conn->prepare("UPDATE sessions SET session_token=?, expires_at=?");
-                $stmt->bind_param("ss", $token, $datetime);
+                $stmt = $conn->prepare("UPDATE sessions SET session_token=?, expires_at=? WHERE user_id=?");
+                $stmt->bind_param("sss", $token, $datetime, $_SESSION['user']['user_id']);
                 $stmt->execute();
             } else{
-
-            $stmt = $conn->prepare("INSERT INTO sessions (user_id, session_token, expires_at) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $_SESSION['user']['user_id'], $token, $datetime);
-            $stmt->execute();
+                $stmt = $conn->prepare("INSERT INTO sessions (user_id, session_token, expires_at) VALUES (?, ?, ?)");
+                $stmt->bind_param("sss", $_SESSION['user']['user_id'], $token, $datetime);
+                $stmt->execute();
             }
 
             // Upload na DB
