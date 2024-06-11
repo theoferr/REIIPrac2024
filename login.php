@@ -21,8 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Generate a token
             $token = bin2hex(random_bytes(32));
             $_SESSION['token'] = $token;
-            error_reporting(E_ALL);
-            ini_set("display_errors", 1);
+            $_SESSION['role'] = $user['role'];
+
             // Store token in session
             $expires = time() + 3600;
             $datetime = date('Y-m-d H:i:s', $expires);
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else{
 
             $stmt = $conn->prepare("INSERT INTO sessions (user_id, session_token, expires_at) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $session['user_id'], $token, $datetime);
+            $stmt->bind_param("sss", $_SESSION['user']['user_id'], $token, $datetime);
             $stmt->execute();
             }
 

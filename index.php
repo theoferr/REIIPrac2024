@@ -1,3 +1,10 @@
+<?php
+include 'session.php';
+if (isset($_GET['logout'])) {
+    logout();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

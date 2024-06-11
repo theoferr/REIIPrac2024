@@ -4,7 +4,7 @@ include 'session.php';
 session_start();
 
 // Check if the token from the cookie matches the session token
-if (!check_session()) {
+if (!check_session() || $_SESSION !== 'customer') {
     header("Location: login.php");
     exit();
 } 
@@ -189,7 +189,7 @@ $stmt->close();
             <p>No products found.</p>
         <?php endif; ?>
         <div class="links">
-            <a href="index.php">Logout</a>
+            <a href="index.php?logout=true">Logout</a>
             <a href="wallet.php">Manage Funds</a>
         </div>
     </div>

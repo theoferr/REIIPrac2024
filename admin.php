@@ -1,11 +1,12 @@
 <?php
 include 'practicalDB.php';
+include 'session.php';
 session_start();
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'merchant') {
+if (!check_session() || $_SESSION['role'] !== 'admin') {
     header("Location: login.php");
     exit();
-}
+} 
 
 $merchant_id = $_SESSION['user']['user_id'];
 ?>

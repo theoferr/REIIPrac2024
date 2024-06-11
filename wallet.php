@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
         </form>
         <div class="links">
             <a href="shop.php">Back to Orders</a>
-            <a href="index.php">Logout</a>
+            <a href="index.php?logout=true">Logout</a>
         </div>
     </div>
 

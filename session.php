@@ -2,9 +2,9 @@
 include 'practicalDB.php';
 
 function logout() {
-    // session_start();
-    // session_destroy();
-    // setcookie('session_token', '', time() - 3600, '/');
+    session_start();
+    session_destroy();
+    setcookie('session_token', '', time() - 3600, '/');
 }
 
 function check_session() {
