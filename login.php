@@ -1,5 +1,6 @@
 <?php
 include 'practicalDB.php';
+include 'session.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -15,10 +16,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION['user'] = $user;
-            if ($user['role'] == 'merchant') {
-                header("Location: merchant_dashboard.php");
-            } else {
-                header("Location: shop.php"); // Redirect other roles to their respective dashboards
+            // echo '<script>console.log('. json_encode($_SESSION) .')</script>';
+
+            // Generate a token
+            $token = bin2hex(random_bytes(32));
+            $_SESSION['token'] = $token;
+            error_reporting(E_ALL);
+            ini_set("display_errors", 1);
+            // Store token in session
+            $expires = time() + 3600;
+            $datetime = date('Y-m-d H:i:s', $expires);
+            // Set token in a secure, HTTP-only cookie
+            setcookie('session_token', $token, [
+                'expires' => $expires,  // 1 hour
+                'path' => '/',
+                'domain' => 'localhost',   // Change to your domain
+                'secure' => false,            // Ensure HTTPS
+                'httponly' => false,          // Accessible only by the server
+                'samesite' => 'Lax'       // CSRF protection
+            ]);
+
+            // Check if previous one xpired
+
+            $stmt = $conn->prepare("SELECT * FROM sessions WHERE user_id = ?");
+            $stmt->bind_param("s", $_SESSION['user']['user_id']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        
+            if ($result->num_rows > 0) {
+                $session = $result->fetch_assoc();
+                $stmt = $conn->prepare("UPDATE sessions SET session_token=?, expires_at=?");
+                $stmt->bind_param("ss", $token, $datetime);
+                $stmt->execute();
+            } else{
+
+            $stmt = $conn->prepare("INSERT INTO sessions (user_id, session_token, expires_at) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $session['user_id'], $token, $datetime);
+            $stmt->execute();
+            }
+
+            // Upload na DB
+
+            switch($user['role']){
+                case 'admin':
+                    header("Location: admin.php");
+                    break;
+                case 'merchant':
+                    header("Location: merchant_dashboard.php");
+                    break;
+                case 'customer':
+                    header("Location: shop.php");
+                    break;
+                default:
+                    $message = 'Error!';
             }
             exit();
         } else {

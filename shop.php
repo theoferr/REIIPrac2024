@@ -1,11 +1,13 @@
 <?php
 include 'practicalDB.php';
+include 'session.php';
 session_start();
 
-if (!isset($_SESSION['user'])) {
+// Check if the token from the cookie matches the session token
+if (!check_session()) {
     header("Location: login.php");
     exit();
-}
+} 
 
 $products = [];
 $search_term = "";
