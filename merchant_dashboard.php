@@ -8,6 +8,35 @@ if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'merchant') {
 }
 
 $merchant_id = $_SESSION['user']['user_id'];
+
+// Handle message dismissal
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dismiss_message'])) {
+    $dismissed_message_id = $_POST['message_id'];
+    if (!isset($_SESSION['dismissed_messages'])) {
+        $_SESSION['dismissed_messages'] = [];
+    }
+    $_SESSION['dismissed_messages'][] = $dismissed_message_id;
+}
+
+// Fetch messages related to deleted products for the merchant
+$messages = [];
+$messageStmt = $conn->prepare("
+    SELECT mm.message_id, mm.message, mm.product_name, mm.created_at
+    FROM merchant_messages mm
+    WHERE mm.merchant_id = ?
+    ORDER BY mm.created_at DESC
+");
+$messageStmt->bind_param("i", $merchant_id);
+$messageStmt->execute();
+$messageResult = $messageStmt->get_result();
+
+while ($messageRow = $messageResult->fetch_assoc()) {
+    // Filter out dismissed messages
+    if (!isset($_SESSION['dismissed_messages']) || !in_array($messageRow['message_id'], $_SESSION['dismissed_messages'])) {
+        $messages[] = $messageRow;
+    }
+}
+$messageStmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -55,6 +84,41 @@ $merchant_id = $_SESSION['user']['user_id'];
         a:hover {
             background-color: #0056b3;
         }
+        .messages {
+            margin-top: 2rem;
+            text-align: left;
+        }
+        .message-box {
+            background-color: #f1f1f1;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .message-box h3 {
+            margin: 0 0 0.5rem 0;
+        }
+        .message-box p {
+            margin: 0;
+        }
+        .message-box .date {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .message-box form {
+            margin-top: 0.5rem;
+        }
+        .message-box button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .message-box button:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +128,25 @@ $merchant_id = $_SESSION['user']['user_id'];
         <a href="manage_products.php">Manage Products</a>
         <a href="view_orders.php">View Orders</a>
         <a href="index.php?logout=true">Logout</a>
+
+        <?php if (!empty($messages)): ?>
+            <div class="messages">
+                <h2>Deleted Items and Messages</h2>
+                <?php foreach ($messages as $message): ?>
+                    <div class="message-box">
+                        <h3>Product: <?php echo htmlspecialchars($message['product_name'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                        <p><?php echo htmlspecialchars($message['message'], ENT_QUOTES, 'UTF-8'); ?></p>
+                        <p class="date">Deleted on: <?php echo htmlspecialchars($message['created_at'], ENT_QUOTES, 'UTF-8'); ?></p>
+                        <form method="POST" action="">
+                            <input type="hidden" name="message_id" value="<?php echo $message['message_id']; ?>">
+                            <button type="submit" name="dismiss_message">Dismiss</button>
+                        </form>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>No messages found.</p>
+        <?php endif; ?>
     </div>
 </body>
 </html>

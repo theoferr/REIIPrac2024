@@ -26,14 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id']) && isset($
     $stmt->close();
 }
 
-// Fetch orders for the merchant
+// Fetch orders for the merchant, including customer emails
 $orders = [];
 if (isset($_GET['search_order_id'])) {
     $search_order_id = $_GET['search_order_id'];
-    $stmt = $conn->prepare("SELECT * FROM orders WHERE order_id = ? AND order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
+    $stmt = $conn->prepare("SELECT o.*, u.email FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id = ? AND o.order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
     $stmt->bind_param("ii", $search_order_id, $merchant_id);
 } else {
-    $stmt = $conn->prepare("SELECT * FROM orders WHERE order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
+    $stmt = $conn->prepare("SELECT o.*, u.email FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
     $stmt->bind_param("i", $merchant_id);
 }
 
@@ -153,6 +153,7 @@ $stmt->close();
                 <div>
                     <p>Order ID: <?php echo htmlspecialchars($order['order_id'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p>User ID: <?php echo htmlspecialchars($order['user_id'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <p>Email: <?php echo htmlspecialchars($order['email'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p>Total: <?php echo htmlspecialchars($order['total'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p>Status: <?php echo htmlspecialchars($order['status'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <form method="POST" action="">

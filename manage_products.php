@@ -9,6 +9,16 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'merchant') {
 
 $merchant_id = $_SESSION['user']['user_id'];
 $products = [];
+$departments = [];
+
+// Fetch departments
+$deptStmt = $conn->prepare("SELECT department_id, name FROM departments");
+$deptStmt->execute();
+$deptResult = $deptStmt->get_result();
+while ($deptRow = $deptResult->fetch_assoc()) {
+    $departments[$deptRow['department_id']] = $deptRow['name'];
+}
+$deptStmt->close();
 
 if (isset($_GET['search'])) {
     $search = "%" . $_GET['search'] . "%";
@@ -35,9 +45,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $price = $_POST["price"];
     $stock = $_POST["stock"];
     $image_url = $_POST["image_url"];
+    $department_id = $_POST["department_id"];  // Capture the department ID from the form
 
-    $stmt = $conn->prepare("UPDATE products SET name = ?, description = ?, price = ?, stock = ?, image_url = ? WHERE product_id = ? AND merchant_id = ?");
-    $stmt->bind_param("ssdisii", $name, $description, $price, $stock, $image_url, $product_id, $merchant_id);
+    $stmt = $conn->prepare("UPDATE products SET name = ?, description = ?, price = ?, stock = ?, image_url = ?, department_id = ? WHERE product_id = ? AND merchant_id = ?");
+    $stmt->bind_param("ssdisiii", $name, $description, $price, $stock, $image_url, $department_id, $product_id, $merchant_id);
 
     if ($stmt->execute()) {
         $message = "Product updated successfully!";
@@ -49,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -167,6 +179,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="description">Description:</label>
                     <textarea id="description" name="description" required><?php echo htmlspecialchars($product['description'], ENT_QUOTES, 'UTF-8'); ?></textarea>
                     
+                    <label for="department_id">Department:</label>
+                    <select id="department_id" name="department_id">
+                        <?php foreach ($departments as $id => $name): ?>
+                            <option value="<?= $id ?>" <?php if ($id == $product['department_id']) echo 'selected'; ?>><?= htmlspecialchars($name) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+
                     <label for="price">Price:</label>
                     <input type="text" id="price" name="price" value="<?php echo $product['price']; ?>" required>
                     
