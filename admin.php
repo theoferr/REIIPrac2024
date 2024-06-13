@@ -30,22 +30,18 @@ while ($userRow = $userResult->fetch_assoc()) {
 }
 $userStmt->close();
 
-// Fetch sales data for the week
+// Fetch sales data for the week and top merchant
 $sales = [];
 $topMerchant = null;
 $salesStmt = $conn->prepare("
-    SELECT o.order_id, o.user_id, o.total, o.status, o.created_at, 
-       oi.product_id, oi.quantity, oi.price, 
-       p.name AS product_name, 
-       u.username AS customer_name, 
-       m.username AS merchant_name
-FROM orders o
-JOIN order_items oi ON o.order_id = oi.order_id
-JOIN products p ON oi.product_id = p.product_id
-JOIN users u ON o.user_id = u.user_id
-JOIN users m ON p.merchant_id = m.user_id
-WHERE o.created_at >= NOW() - INTERVAL 7 DAY
-ORDER BY o.created_at DESC
+    SELECT m.username AS merchant_name, SUM(oi.price * oi.quantity) AS total_sales
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_id
+    JOIN users m ON p.merchant_id = m.user_id
+    WHERE o.created_at >= NOW() - INTERVAL 7 DAY
+    GROUP BY m.username
+    ORDER BY total_sales DESC
 ");
 $salesStmt->execute();
 $salesResult = $salesStmt->get_result();
