@@ -72,7 +72,7 @@ if (isset($_GET['logout'])) {
 
 <body>
     <div class="container">
-        <h2>Welcome to Piet Snoek Website</h2>
+        <h2>Welcome to Baas Theo's Website</h2>
         <img src="images/logo_1.png" alt="Website Logo">
         <a href="signup.php">Sign Up</a>
         <a href="login.php">Login</a>
