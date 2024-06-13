@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt->execute();
                 }
 
-                switch($_SESSION['role']) {
+                switch ($_SESSION['role']) {
                     case 'admin':
                         header("Location: admin.php");
                         break;
@@ -80,6 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -95,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             align-items: center;
             height: 100vh;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -104,21 +106,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             max-width: 400px;
             width: 100%;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         form {
             display: flex;
             flex-direction: column;
             align-items: stretch;
         }
+
         label {
             margin-bottom: 0.5rem;
             font-weight: 700;
             color: #495057;
             text-align: left;
         }
+
         input[type="text"],
         input[type="password"],
         input[type="email"] {
@@ -129,6 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 1rem;
             color: #495057;
         }
+
         input[type="submit"] {
             padding: 0.75rem;
             font-weight: 700;
@@ -139,34 +146,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
         .message {
             margin-top: 1rem;
             font-weight: 700;
             color: #dc3545;
         }
+
+        img {
+            margin-bottom: 1.5rem;
+            border-radius: 50%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 30%;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Login</h2>
-        <?php if (isset($message)): ?>
+        <img src="images/logo_1.png" alt="Website Logo">
+        <?php if (isset($message)) : ?>
             <p class="message"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
         <?php endif; ?>
         <form method="POST" action="">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
-            
+
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
 
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-            
+
             <input type="submit" value="Login">
         </form>
     </div>
 </body>
+
 </html>
