@@ -4,21 +4,33 @@ include 'practicalDB.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $email = $_POST["email"];
     $role = $_POST["role"];
 
-    $stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $username, $password, $role);
+    // Check if email already exists
+    $checkEmail = $conn->prepare("SELECT email FROM users WHERE email = ?");
+    $checkEmail->bind_param("s", $email);
+    $checkEmail->execute();
+    $checkEmail->store_result();
 
-    if ($stmt->execute()) {
-        $message = "Registration successful!";
+    if ($checkEmail->num_rows > 0) {
+        $message = "An account with this email already exists.";
     } else {
-        $message = "Error: " . $stmt->error;
-    }
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $username, $email, $password, $role);
 
-    $stmt->close();
+        if ($stmt->execute()) {
+            $message = "Registration successful!";
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    }
+    $checkEmail->close();
     $conn->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -98,21 +110,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="message"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
         <?php endif; ?>
         <form method="POST" action="">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-            
-            <label for="role">Role:</label>
-            <select id="role" name="role">
-                <option value="customer">Customer</option>
-                <option value="merchant">Merchant</option>
-                <option value="admin">Admin</option>
-            </select>
-            
-            <input type="submit" value="Sign Up">
-        </form>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <label for="role">Role:</label>
+        <select id="role" name="role">
+            <option value="customer">Customer</option>
+            <option value="merchant">Merchant</option>
+            <option value="admin">Admin</option>
+        </select>
+        
+        <input type="submit" value="Sign Up">
+    </form>
     </div>
 </body>
 </html>

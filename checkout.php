@@ -159,7 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
         <div class="links">
             <a href="basket.php">Back to Basket</a>
-            <a href="logout.php">Logout</a>
+            <a href="index.php?logout=true">Logout</a>
         </div>
     </div>
 </body>

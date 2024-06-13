@@ -1,30 +1,45 @@
 <?php
 include 'practicalDB.php';
+include 'session.php';
 session_start();
 
-if (!isset($_SESSION['user'])) {
+if (!check_session() || $_SESSION['role'] !== 'customer') {
     header("Location: login.php");
     exit();
 }
 
-$products = [];
-$search_term = "";
+// Fetch departments
+$departments = [];
+$deptStmt = $conn->prepare("SELECT department_id, name FROM departments ORDER BY name");
+$deptStmt->execute();
+$deptResult = $deptStmt->get_result();
+while ($deptRow = $deptResult->fetch_assoc()) {
+    $departments[] = $deptRow;
+}
+$deptStmt->close();
 
-if (isset($_GET['search_term'])) {
-    $search_term = "%" . $_GET['search_term'] . "%";
-    $stmt = $conn->prepare("SELECT * FROM products WHERE name LIKE ? AND stock > 0");
-    $stmt->bind_param("s", $search_term);
-} else {
-    $stmt = $conn->prepare("SELECT * FROM products WHERE stock > 0");
+// Fetch products based on department
+$products = [];
+$department_filter = isset($_GET['department']) ? (int)$_GET['department'] : 0;
+$search_term = isset($_GET['search_term']) ? "%" . $_GET['search_term'] . "%" : "%";
+
+$query = "SELECT * FROM products WHERE stock > 0 AND name LIKE ?";
+$params = ["s", $search_term];
+
+if ($department_filter > 0) {
+    $query .= " AND department_id = ?";
+    $params[0] .= "i";
+    $params[] = $department_filter;
 }
 
+$stmt = $conn->prepare($query);
+$stmt->bind_param(...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
 while ($row = $result->fetch_assoc()) {
     $products[] = $row;
 }
-
 $stmt->close();
 ?>
 
@@ -37,10 +52,23 @@ $stmt->close();
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        /* Existing and new styles */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f8f9fa;
             margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .sidebar {
+            text-align: left;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 200px;
+            width: 100%;
+            margin: 2rem;
         }
         .container {
             text-align: center;
@@ -50,7 +78,7 @@ $stmt->close();
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 800px;
             width: 100%;
-            margin: 2rem auto;
+            margin: 2rem;
         }
         h2 {
             margin-bottom: 1.5rem;
@@ -128,17 +156,17 @@ $stmt->close();
             align-items: center;
             margin-bottom: 2rem;
         }
-        .view-basket {
+        .view-basket, .view-orders {
             text-decoration: none;
             color: #007bff;
             font-weight: 700;
             display: flex;
             align-items: center;
         }
-        .view-basket:hover {
+        .view-basket:hover, .view-orders:hover {
             color: #0056b3;
         }
-        .view-basket i {
+        .view-basket i, .view-orders i {
             margin-right: 0.5rem;
         }
         .links {
@@ -156,10 +184,22 @@ $stmt->close();
     </style>
 </head>
 <body>
+    <div class="sidebar">
+        <h3>Departments</h3>
+        <ul>
+            <li><a href="shop.php">All Departments</a></li>
+            <?php foreach ($departments as $dept): ?>
+                <li><a href="?department=<?= $dept['department_id'] ?>"><?= htmlspecialchars($dept['name']) ?></a></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
     <div class="container">
         <div class="top-bar">
             <h2>Shop</h2>
-            <a href="basket.php" class="view-basket"><i class="fas fa-shopping-basket"></i> View Basket</a>
+            <div>
+                <a href="basket.php" class="view-basket"><i class="fas fa-shopping-basket"></i> View Basket</a>
+                <a href="view_customer_orders.php" class="view-orders"><i class="fas fa-box"></i> View Orders</a>
+            </div>
         </div>
         <div class="search-bar">
             <form method="GET" action="">
@@ -187,7 +227,7 @@ $stmt->close();
             <p>No products found.</p>
         <?php endif; ?>
         <div class="links">
-            <a href="index.php">Logout</a>
+            <a href="index.php?logout=true">Logout</a>
             <a href="wallet.php">Manage Funds</a>
         </div>
     </div>

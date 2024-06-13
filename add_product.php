@@ -7,6 +7,13 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'merchant') {
     exit();
 }
 
+$departments = [];
+$query = "SELECT department_id, name FROM departments";  //ORDER BY name
+$result = $conn->query($query);
+while ($row = $result->fetch_assoc()) {
+    $departments[] = $row;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
     $description = $_POST["description"];
@@ -14,9 +21,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stock = $_POST["stock"];
     $merchant_id = $_SESSION['user']['user_id'];
     $image_url = $_POST["image_url"];
+    $department_id = $_POST["department_id"]; // Capture department ID from the form
 
-    $stmt = $conn->prepare("INSERT INTO products (merchant_id, name, description, price, stock, image_url) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("issdis", $merchant_id, $name, $description, $price, $stock, $image_url);
+    $stmt = $conn->prepare("INSERT INTO products (merchant_id, name, description, price, stock, image_url, department_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("issdisi", $merchant_id, $name, $description, $price, $stock, $image_url, $department_id);
 
     if ($stmt->execute()) {
         $message = "Product added successfully!";
@@ -72,7 +80,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         input[type="text"],
         input[type="number"],
-        textarea {
+        textarea,
+        select {
             padding: 0.75rem;
             margin-bottom: 1rem;
             border: 1px solid #ced4da;
@@ -112,7 +121,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             <label for="description">Description:</label>
             <textarea id="description" name="description" required></textarea>
-            
+
+            <label for="department_id">Department:</label>
+            <select id="department_id" name="department_id" required>
+                <?php foreach ($departments as $department): ?>
+                    <option value="<?= $department['department_id'] ?>"><?= htmlspecialchars($department['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+
             <label for="price">Price:</label>
             <input type="text" id="price" name="price" required>
             
@@ -123,7 +139,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="text" id="image_url" name="image_url">
             
             <input type="submit" value="Add Product">
+            <!--<button type="button" onclick="window.location.href='merchant_dashboard.php'">Back to Dashboard</button>-->
+            <hr>
         </form>
+        <a href="merchant_dashboard.php">Back to Dashboard</a>
     </div>
 </body>
 </html>

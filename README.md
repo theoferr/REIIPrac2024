@@ -1,2 +1,29 @@
-index in waar waar kies om te login/signup. Kan signup as merchant of customer. Mechant kan product add om te verkoop. Kan ook status van order manage. Customers kan products van merchants koop met geld wat in hulle wallet is.
-Wat geadd moet word is manier om ingesign te bly. Ook admin moet ook kan inlog en admin stuff doen. En host
+# 12/06/2024
+Added:
+Admin 
+-> Can change user information accept passwords (Maby look into changing passwords for average user if forgotten???)
+-> Can perform custom quaries on database (Dont drop everything pleasssssss!!!)
+-> Can view pending shipments to tell merchants to be hastig as possible
+-> Can remove products
+
+Merchant
+-> Can now see if a product has been removed
+
+Customers
+-> Can now see the products they have kooped
+
+Bugs:
+Admin:
+-> Cant see all transactions this week
+-> Merchant email not showing at pending shipments
+
+Merchant:
+-> Add item catagories not showing correcly
+
+Shop:
+-> Fix weird showing of catagories
+
+TO DO Tommorow:
+-> Squash bugs
+-> Make fire video
+-> Try to host

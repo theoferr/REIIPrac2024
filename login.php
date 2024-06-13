@@ -1,31 +1,76 @@
 <?php
 include 'practicalDB.php';
+include 'session.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $username = isset($_POST["username"]) ? $_POST["username"] : null;
+    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+    $email = isset($_POST['email']) ? $conn->real_escape_string($_POST['email']) : null;
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    if ($username && $email && $password) {
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
+        $stmt->bind_param("ss", $username, $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user'] = $user;
-            if ($user['role'] == 'merchant') {
-                header("Location: merchant_dashboard.php");
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user'] = $user;
+                $token = bin2hex(random_bytes(32));
+                $_SESSION['token'] = $token;
+                $_SESSION['role'] = $user['role'];
+
+                $expires = time() + 3600;
+                $datetime = date('Y-m-d H:i:s', $expires);
+                setcookie('session_token', $token, [
+                    'expires' => $expires,
+                    'path' => '/',
+                    'domain' => 'localhost', // Change to your domain
+                    'secure' => false, // Ensure HTTPS
+                    'httponly' => false, // Accessible only by the server
+                    'samesite' => 'Lax' // CSRF protection
+                ]);
+
+                $stmt = $conn->prepare("SELECT * FROM sessions WHERE user_id = ?");
+                $stmt->bind_param("s", $_SESSION['user']['user_id']);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0) {
+                    $session = $result->fetch_assoc();
+                    $stmt = $conn->prepare("UPDATE sessions SET session_token=?, expires_at=? WHERE user_id=?");
+                    $stmt->bind_param("sss", $token, $datetime, $_SESSION['user']['user_id']);
+                    $stmt->execute();
+                } else {
+                    $stmt = $conn->prepare("INSERT INTO sessions (user_id, session_token, expires_at) VALUES (?, ?, ?)");
+                    $stmt->bind_param("sss", $_SESSION['user']['user_id'], $token, $datetime);
+                    $stmt->execute();
+                }
+
+                switch($_SESSION['role']) {
+                    case 'admin':
+                        header("Location: admin.php");
+                        break;
+                    case 'merchant':
+                        header("Location: merchant_dashboard.php");
+                        break;
+                    case 'customer':
+                        header("Location: shop.php");
+                        break;
+                    default:
+                        $message = 'Error!';
+                }
+                exit();
             } else {
-                header("Location: shop.php"); // Redirect other roles to their respective dashboards
+                $message = "Invalid password.";
             }
-            exit();
         } else {
-            $message = "Invalid password.";
+            $message = "No user found with that username or email.";
         }
     } else {
-        $message = "No user found with that username.";
+        $message = "Please provide username, email, and password.";
     }
 
     $stmt->close();
@@ -75,7 +120,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             text-align: left;
         }
         input[type="text"],
-        input[type="password"] {
+        input[type="password"],
+        input[type="email"] {
             padding: 0.75rem;
             margin-bottom: 1rem;
             border: 1px solid #ced4da;
@@ -113,6 +159,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
             

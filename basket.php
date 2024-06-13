@@ -132,7 +132,7 @@ if ($basket) {
         <?php endif; ?>
         <div class="links">
             <a href="shop.php">Continue Shopping</a>
-            <a href="index.php">Logout</a>
+            <a href="index.php?logout=true">Logout</a>
         </div>
     </div>
 </body>
