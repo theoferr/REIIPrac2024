@@ -21,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($stmt->execute()) {
             $message = "Registration successful!";
+            header("Location: login.php");
         } else {
             $message = "Error: " . $stmt->error;
         }
@@ -80,6 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         input[type="text"],
+        input[type="email"],
         input[type="password"],
         select {
             padding: 0.75rem;
