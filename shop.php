@@ -45,6 +45,7 @@ $stmt->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,6 +61,7 @@ $stmt->close();
             display: flex;
             justify-content: center;
         }
+
         .sidebar {
             text-align: left;
             background: #fff;
@@ -70,6 +72,44 @@ $stmt->close();
             width: 100%;
             margin: 2rem;
         }
+
+        .sidebar img {
+            margin-bottom: 1.5rem;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .sidebar h3 {
+            font-size: 1.2rem;
+            color: #343a40;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: 700;
+            display: block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
         .container {
             text-align: center;
             background: #fff;
@@ -80,21 +120,25 @@ $stmt->close();
             width: 100%;
             margin: 2rem;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         .product {
             margin-bottom: 2rem;
             text-align: left;
             border-bottom: 1px solid #ced4da;
             padding-bottom: 1rem;
         }
+
         .product img {
             max-width: 200px;
             max-height: 200px;
             margin-bottom: 1rem;
         }
+
         label {
             margin-bottom: 0.5rem;
             font-weight: 700;
@@ -102,6 +146,7 @@ $stmt->close();
             text-align: left;
             display: block;
         }
+
         input[type="text"],
         input[type="number"] {
             width: calc(100% - 20px);
@@ -112,6 +157,7 @@ $stmt->close();
             font-size: 1rem;
             color: #495057;
         }
+
         input[type="submit"] {
             padding: 0.75rem 2rem;
             font-weight: 700;
@@ -122,12 +168,15 @@ $stmt->close();
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
         .search-bar {
             margin-bottom: 2rem;
         }
+
         .search-bar input[type="text"] {
             width: calc(100% - 22px);
             padding: 0.75rem;
@@ -137,6 +186,7 @@ $stmt->close();
             font-size: 1rem;
             color: #495057;
         }
+
         .search-bar input[type="submit"] {
             padding: 0.75rem 2rem;
             font-weight: 700;
@@ -147,48 +197,61 @@ $stmt->close();
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .search-bar input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
-        .view-basket, .view-orders {
+
+        .view-basket,
+        .view-orders {
             text-decoration: none;
             color: #007bff;
             font-weight: 700;
             display: flex;
             align-items: center;
         }
-        .view-basket:hover, .view-orders:hover {
+
+        .view-basket:hover,
+        .view-orders:hover {
             color: #0056b3;
         }
-        .view-basket i, .view-orders i {
+
+        .view-basket i,
+        .view-orders i {
             margin-right: 0.5rem;
         }
+
         .links {
             margin-top: 2rem;
         }
+
         .links a {
             display: inline-block;
             margin-right: 1rem;
             color: #007bff;
             text-decoration: none;
         }
+
         .links a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
+        <a href="shop.php"><img src="images/logo_1.png" alt="Website Logo"></a>
         <h3>Departments</h3>
         <ul>
             <li><a href="shop.php">All Departments</a></li>
-            <?php foreach ($departments as $dept): ?>
+            <?php foreach ($departments as $dept) : ?>
                 <li><a href="?department=<?= $dept['department_id'] ?>"><?= htmlspecialchars($dept['name']) ?></a></li>
             <?php endforeach; ?>
         </ul>
@@ -207,8 +270,8 @@ $stmt->close();
                 <input type="submit" value="Search">
             </form>
         </div>
-        <?php if (!empty($products)): ?>
-            <?php foreach ($products as $product): ?>
+        <?php if (!empty($products)) : ?>
+            <?php foreach ($products as $product) : ?>
                 <div class="product">
                     <h3><?php echo htmlspecialchars($product['name']); ?></h3>
                     <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
@@ -223,7 +286,7 @@ $stmt->close();
                     </form>
                 </div>
             <?php endforeach; ?>
-        <?php else: ?>
+        <?php else : ?>
             <p>No products found.</p>
         <?php endif; ?>
         <div class="links">
@@ -232,4 +295,5 @@ $stmt->close();
         </div>
     </div>
 </body>
+
 </html>

@@ -7,6 +7,7 @@ if (isset($_GET['logout'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +23,7 @@ if (isset($_GET['logout'])) {
             align-items: center;
             height: 100vh;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -29,10 +31,22 @@ if (isset($_GET['logout'])) {
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
+        img {
+            margin-bottom: 1.5rem;
+            border-radius: 50%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 25%;
+        }
+
         a {
             display: inline-block;
             margin: 0.5rem;
@@ -44,20 +58,25 @@ if (isset($_GET['logout'])) {
             text-decoration: none;
             transition: background-color 0.3s;
         }
+
         a:hover {
             background-color: #0056b3;
         }
+
         a:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Welcome to Baas Theo's Website</h2>
+        <img src="images/logo_1.png" alt="Website Logo">
         <a href="signup.php">Sign Up</a>
         <a href="login.php">Login</a>
     </div>
 </body>
+
 </html>

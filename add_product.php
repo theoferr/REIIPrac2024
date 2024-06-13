@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'merchant') {
 }
 
 $departments = [];
-$query = "SELECT department_id, name FROM departments";  //ORDER BY name
+$query = "SELECT department_id, name FROM departments ORDER BY name";  //ORDER BY name
 $result = $conn->query($query);
 while ($row = $result->fetch_assoc()) {
     $departments[] = $row;

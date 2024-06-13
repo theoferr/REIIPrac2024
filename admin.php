@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
     $user_id = $_POST['user_id'];
     $new_role = $_POST['role'];
     $new_email = $_POST['email'];
-    
+
     $stmt = $conn->prepare("UPDATE users SET role = ?, email = ? WHERE user_id = ?");
     $stmt->bind_param("ssi", $new_role, $new_email, $user_id);
     $stmt->execute();
@@ -34,14 +34,18 @@ $userStmt->close();
 $sales = [];
 $topMerchant = null;
 $salesStmt = $conn->prepare("
-    SELECT p.merchant_id, m.username AS merchant_name, SUM(oi.quantity * oi.price) AS total_sales
-    FROM orders o
-    JOIN order_items oi ON o.order_id = oi.order_id
-    JOIN products p ON oi.product_id = p.product_id
-    JOIN users m ON p.merchant_id = m.user_id
-    WHERE o.status = 'delivered' AND o.created_at >= DATE_SUB(CURDATE(), INTERVAL 1 WEEK)
-    GROUP BY p.merchant_id
-    ORDER BY total_sales DESC
+    SELECT o.order_id, o.user_id, o.total, o.status, o.created_at, 
+       oi.product_id, oi.quantity, oi.price, 
+       p.name AS product_name, 
+       u.username AS customer_name, 
+       m.username AS merchant_name
+FROM orders o
+JOIN order_items oi ON o.order_id = oi.order_id
+JOIN products p ON oi.product_id = p.product_id
+JOIN users u ON o.user_id = u.user_id
+JOIN users m ON p.merchant_id = m.user_id
+WHERE o.created_at >= NOW() - INTERVAL 7 DAY
+ORDER BY o.created_at DESC
 ");
 $salesStmt->execute();
 $salesResult = $salesStmt->get_result();
@@ -84,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             display: flex;
             justify-content: center;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -107,22 +113,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             width: 100%;
             margin: 2rem;
         }
-        h2, h3 {
+
+        h2,
+        h3 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 2rem;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid #ced4da;
         }
-        th, td {
+
+        th,
+        td {
             padding: 0.75rem;
             text-align: left;
         }
+
         label {
             margin-bottom: 0.5rem;
             font-weight: 700;
@@ -130,8 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             text-align: left;
             display: block;
         }
+
         input[type="text"],
-        select, textarea {
+        select,
+        textarea {
             width: calc(100% - 20px);
             padding: 0.75rem;
             margin-bottom: 1rem;
@@ -140,7 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             font-size: 1rem;
             color: #495057;
         }
-        input[type="submit"], button {
+
+        input[type="submit"],
+        button {
             padding: 0.75rem 2rem;
             font-weight: 700;
             color: #fff;
@@ -150,15 +169,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        input[type="submit"]:hover, button:hover {
+
+        input[type="submit"]:hover,
+        button:hover {
             background-color: #0056b3;
         }
+
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
+
         .view-all-products {
             text-decoration: none;
             color: #007bff;
@@ -166,18 +189,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             display: flex;
             align-items: center;
         }
+
         .view-all-products:hover {
             color: #0056b3;
         }
+
+        img {
+            margin-bottom: 1.5rem;
+            border-radius: 50%;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 33%;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="top-bar">
             <h2>Admin Dashboard</h2>
+            <img src="images/logo_1.png" alt="Website Logo">
             <a href="view_all_products.php" class="view-all-products"><i class="fas fa-boxes"></i> View All Products</a>
         </div>
-        
+
         <!-- Change User Roles and Emails -->
         <h3>Change User Roles and Emails</h3>
         <table>
@@ -187,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
                 <th>Current Role</th>
                 <th>Change Role and Email</th>
             </tr>
-            <?php foreach ($users as $user): ?>
+            <?php foreach ($users as $user) : ?>
                 <tr>
                     <td><?= htmlspecialchars($user['username']) ?></td>
                     <td><?= htmlspecialchars($user['email']) ?></td>
@@ -215,14 +251,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
                 <th>Merchant</th>
                 <th>Total Sales</th>
             </tr>
-            <?php foreach ($sales as $sale): ?>
+            <?php foreach ($sales as $sale) : ?>
                 <tr>
                     <td><?= htmlspecialchars($sale['merchant_name']) ?></td>
                     <td>R<?= number_format($sale['total_sales'], 2) ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>
-        <?php if ($topMerchant): ?>
+        <?php if ($topMerchant) : ?>
             <p>Top Merchant of the Week: <?= htmlspecialchars($topMerchant['merchant_name']) ?> with R<?= number_format($topMerchant['total_sales'], 2) ?> in sales</p>
         <?php endif; ?>
 
@@ -238,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
                 <th>Merchant</th>
                 <th>Merchant Email</th>
             </tr>
-            <?php foreach ($unshipped as $item): ?>
+            <?php foreach ($unshipped as $item) : ?>
                 <tr>
                     <td><?= htmlspecialchars($item['order_id']) ?></td>
                     <td><?= htmlspecialchars($item['product_name']) ?></td>
@@ -257,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             <textarea name="query" rows="4" cols="50" placeholder="Enter your SQL query here" required></textarea><br>
             <input type="submit" name="custom_query" value="Run Query">
         </form>
-        <?php if ($customQueryResult): ?>
+        <?php if ($customQueryResult) : ?>
             <h4>Query Result</h4>
             <table>
                 <?php
@@ -282,4 +318,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
         <?php endif; ?>
     </div>
 </body>
+
 </html>
