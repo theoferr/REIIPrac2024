@@ -81,6 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
         $customQueryResult = $conn->query($query);
     }
 }
+
+// Handle logout
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
+    logout();
+    header("Location: login.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -199,6 +206,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
             margin-right: auto;
             width: 33%;
         }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 
@@ -312,6 +334,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['custom_query'])) {
                 ?>
             </table>
         <?php endif; ?>
+
+        <!-- Logout Button -->
+        <form method="POST" action="">
+            <hr>
+            <input type="hidden" name="logout" value="true">
+            <input type="submit" class="logout-btn" value="Logout">
+        </form>
     </div>
 </body>
 
