@@ -20,50 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
     $stmt->close();
 }
 
-// Fetch users based on search criteria
+// Fetch users
 $users = [];
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['search_user_id']) || isset($_GET['search_username']) || isset($_GET['search_email']) || isset($_GET['search_role']))) {
-    $search_user_id = $_GET['search_user_id'];
-    $search_username = $_GET['search_username'];
-    $search_email = $_GET['search_email'];
-    $search_role = $_GET['search_role'];
-
-    $query = "SELECT user_id, username, email, role FROM users WHERE 1=1";
-    $types = "";
-    $params = [];
-
-    if (!empty($search_user_id)) {
-        $query .= " AND user_id = ?";
-        $types .= "i";
-        $params[] = $search_user_id;
-    }
-    if (!empty($search_username)) {
-        $query .= " AND username LIKE ?";
-        $types .= "s";
-        $params[] = "%" . $search_username . "%";
-    }
-    if (!empty($search_email)) {
-        $query .= " AND email LIKE ?";
-        $types .= "s";
-        $params[] = "%" . $search_email . "%";
-    }
-    if (!empty($search_role)) {
-        $query .= " AND role = ?";
-        $types .= "s";
-        $params[] = $search_role;
-    }
-
-    $userStmt = $conn->prepare($query);
-    if ($params) {
-        $userStmt->bind_param($types, ...$params);
-    }
-    $userStmt->execute();
-    $userResult = $userStmt->get_result();
-    while ($userRow = $userResult->fetch_assoc()) {
-        $users[] = $userRow;
-    }
-    $userStmt->close();
+$userStmt = $conn->prepare("SELECT user_id, username, email, role FROM users");
+$userStmt->execute();
+$userResult = $userStmt->get_result();
+while ($userRow = $userResult->fetch_assoc()) {
+    $users[] = $userRow;
 }
+$userStmt->close();
 
 // Fetch sales data for the week and top merchant
 $sales = [];
@@ -100,7 +65,6 @@ $unshippedStmt = $conn->prepare("
     JOIN users b ON o.user_id = b.user_id
     JOIN users m ON p.merchant_id = m.user_id
     WHERE o.status = 'pending'
-    LIMIT 10
 ");
 $unshippedStmt->execute();
 $unshippedResult = $unshippedStmt->get_result();
@@ -264,32 +228,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
     <div class="container">
         <div class="top-bar">
             <h2>Admin Dashboard</h2>
-            <img src="images/logo_1.png" alt="Website Logo">
+            <img src="/Images/Logo_1.png" alt="Website Logo">
             <a href="view_all_products.php" class="view-all-products"><i class="fas fa-boxes"></i> View All Products</a>
         </div>
-
-        <!-- Search Users -->
-        <h3>Search Users</h3>
-        <form method="GET" action="">
-            <label for="search_user_id">User ID:</label>
-            <input type="text" id="search_user_id" name="search_user_id" placeholder="Enter User ID">
-
-            <label for="search_username">Username:</label>
-            <input type="text" id="search_username" name="search_username" placeholder="Enter Username">
-
-            <label for="search_email">Email:</label>
-            <input type="text" id="search_email" name="search_email" placeholder="Enter Email">
-
-            <label for="search_role">Role:</label>
-            <select id="search_role" name="search_role">
-                <option value="">--Select Role--</option>
-                <option value="customer">Customer</option>
-                <option value="merchant">Merchant</option>
-                <option value="admin">Admin</option>
-            </select>
-
-            <input type="submit" value="Search">
-        </form>
 
         <!-- Change User Roles and Emails -->
         <h3>Change User Roles and Emails</h3>

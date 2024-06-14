@@ -1,0 +1,40 @@
+George Oosthuizen 38041898
+Theo Ferreira 37262416
+Jonathan Vorster 
+
+10 Session management
+  * Logged in users stay logged in
+  * User permissions follow session
+
+5 User creation
+  * Customers and merchants and administrators
+
+15 Wallet concept
+  * Coins or funds
+  * Users deposit
+  * Merchants receive, we receive a percentage
+
+30 Basketing and invoicing
+  * User shop, put stuff in basket
+  * User checkout, pay stuff in basket
+
+10 Shipping and tracking
+  * Merchant confirms order shipped etc
+
+15 Merchant interface
+  * Add stock / items
+  * Prittipiektjers
+  * Manage / despatch orders
+  * Shipping, free?
+
+0 User interface (See basketing for the 30)
+  * Browse
+  * Basket
+  * Pay
+  * Track
+
+5 Administrative interface
+  * Manage users and stuff?
+
+10 Awesomeness
+
