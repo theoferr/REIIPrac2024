@@ -1,0 +1,10 @@
+Intro Scene: A person in a banana costume (George) goes door-to-door trying to sell banana costumes. Everyone declines, leaving George dejected.
+Meeting the Site Manager: Theo, the site manager, pulls up in a big truck wearing shades, looking cool. He introduces himself to George and tells him about the online marketplace where he can sell his banana costumes.
+Account Creation: Cut to a computer screen where George is shown creating a merchant account on the site.
+Listing Products: George uploads pictures of his banana costumes, sets prices, and writes descriptions.
+Customer Experience: A new character, Jonathan, is seen entering various physical stores, visibly frustrated as he can't find a banana costume. Theo mysteriously appears and tells Jonathan about the website.
+Jonathan Shopping Online: Jonathan browses the website, finds George's banana costume, and gets excited. He creates a customer account and completes the purchase using his digital wallet.
+Transaction Notification: George receives a notification of the sale and an invoice.
+Shipping the Product: George packs the costume, updates the order status from "Pending" to "Shipped," and hands it off to a delivery service.
+Admin Oversight: A brief cut to an administrator (played by a group member) monitoring transactions and user activities to ensure everything runs smoothly.
+Closing Scene: Jonathan receives his banana costume, wears it, and dances joyously. George and Theo join him, celebrating the successful transaction.

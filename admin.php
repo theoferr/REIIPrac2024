@@ -65,6 +65,7 @@ $unshippedStmt = $conn->prepare("
     JOIN users b ON o.user_id = b.user_id
     JOIN users m ON p.merchant_id = m.user_id
     WHERE o.status = 'pending'
+    LIMIT 15
 ");
 $unshippedStmt->execute();
 $unshippedResult = $unshippedStmt->get_result();

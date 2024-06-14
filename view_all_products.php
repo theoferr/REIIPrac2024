@@ -8,14 +8,24 @@ if (!check_session() || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Fetch all products
+// Initialize search term
+$search_term = "";
+if (isset($_GET['search_term'])) {
+    $search_term = "%" . $_GET['search_term'] . "%";
+} else {
+    $search_term = "%";
+}
+
+// Fetch all products based on search term
 $products = [];
 $productStmt = $conn->prepare("
     SELECT p.product_id, p.name, p.description, p.price, p.stock, p.image_url, 
            p.merchant_id, m.username AS merchant_name, m.email AS merchant_email
     FROM products p
     JOIN users m ON p.merchant_id = m.user_id
+    WHERE p.name LIKE ?
 ");
+$productStmt->bind_param("s", $search_term);
 $productStmt->execute();
 $productResult = $productStmt->get_result();
 while ($productRow = $productResult->fetch_assoc()) {
@@ -23,18 +33,19 @@ while ($productRow = $productResult->fetch_assoc()) {
 }
 $productStmt->close();
 
-function refundCustomer($conn, $product_id) {
+function refundCustomer($conn, $product_id)
+{
     // Fetch all orders containing the product
     $orderStmt = $conn->prepare("
         SELECT o.user_id, oi.quantity, oi.price 
         FROM order_items oi 
-        JOIN orders o ON oi.order_id = o.order_id 
+        JOIN orders o ON oi.order_id = o.order_id  
         WHERE oi.product_id = ?
     ");
     $orderStmt->bind_param("i", $product_id);
     $orderStmt->execute();
     $orderResult = $orderStmt->get_result();
-    
+
     while ($orderRow = $orderResult->fetch_assoc()) {
         $user_id = $orderRow['user_id'];
         $refund_amount = $orderRow['quantity'] * $orderRow['price'];
@@ -54,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
     $merchant_id = $_POST['merchant_id'];
     $admin_id = $_SESSION['user']['user_id'];
     $message = $_POST['message'];
-    
+
     // Get the product name
     $productNameStmt = $conn->prepare("SELECT name FROM products WHERE product_id = ?");
     $productNameStmt->bind_param("i", $product_id);
@@ -113,10 +124,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
     header("Location: view_all_products.php");
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
             display: flex;
             justify-content: center;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -140,21 +154,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
             width: 100%;
             margin: 2rem;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         .product {
             margin-bottom: 2rem;
             text-align: left;
             border-bottom: 1px solid #ced4da;
             padding-bottom: 1rem;
         }
+
         .product img {
             max-width: 200px;
             max-height: 200px;
             margin-bottom: 1rem;
         }
+
         label {
             margin-bottom: 0.5rem;
             font-weight: 700;
@@ -162,7 +180,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
             text-align: left;
             display: block;
         }
-        input[type="text"], input[type="number"], textarea {
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
             width: calc(100% - 20px);
             padding: 0.75rem;
             margin-bottom: 1rem;
@@ -171,7 +192,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
             font-size: 1rem;
             color: #495057;
         }
-        input[type="submit"], button {
+
+        input[type="submit"],
+        button {
             padding: 0.75rem 2rem;
             font-weight: 700;
             color: #fff;
@@ -181,15 +204,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        input[type="submit"]:hover, button:hover {
+
+        input[type="submit"]:hover,
+        button:hover {
             background-color: #0056b3;
         }
+
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
         }
+
         .view-all-products {
             text-decoration: none;
             color: #007bff;
@@ -197,19 +224,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
             display: flex;
             align-items: center;
         }
+
         .view-all-products:hover {
             color: #0056b3;
         }
+
+        .search-bar {
+            margin-bottom: 2rem;
+        }
+
+        .search-bar input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #495057;
+        }
+
+        .search-bar input[type="submit"] {
+            padding: 0.75rem 2rem;
+            font-weight: 700;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="top-bar">
             <h2>All Products</h2>
             <a href="admin.php" class="view-all-products"><i class="fas fa-arrow-left"></i> Back to Admin Dashboard</a>
         </div>
-        <?php if (!empty($products)): ?>
-            <?php foreach ($products as $product): ?>
+        <div class="search-bar">
+            <form method="GET" action="">
+                <input type="text" name="search_term" placeholder="Search for a product" value="<?php echo isset($_GET['search_term']) ? htmlspecialchars($_GET['search_term']) : ''; ?>">
+                <input type="submit" value="Search">
+            </form>
+        </div>
+        <?php if (!empty($products)) : ?>
+            <?php foreach ($products as $product) : ?>
                 <div class="product">
                     <h3><?php echo htmlspecialchars($product['name']); ?></h3>
                     <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
@@ -226,9 +290,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_product'])) {
                     </form>
                 </div>
             <?php endforeach; ?>
-        <?php else: ?>
+        <?php else : ?>
             <p>No products found.</p>
         <?php endif; ?>
     </div>
 </body>
+
 </html>
