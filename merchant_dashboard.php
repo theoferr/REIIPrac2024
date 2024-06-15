@@ -1,8 +1,9 @@
 <?php
 include 'practicalDB.php';
+include 'session.php';
 session_start();
 
-if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'merchant') {
+if (!isset($_SESSION['user']) || $_SESSION['role'] !== 'merchant' || !check_session()) {
     header("Location: login.php");
     exit();
 }
@@ -41,6 +42,7 @@ $messageStmt->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,6 +59,7 @@ $messageStmt->close();
             align-items: center;
             height: 100vh;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -66,10 +69,12 @@ $messageStmt->close();
             max-width: 400px;
             width: 100%;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         a {
             display: inline-block;
             margin: 0.5rem 0;
@@ -81,32 +86,40 @@ $messageStmt->close();
             text-decoration: none;
             transition: background-color 0.3s;
         }
+
         a:hover {
             background-color: #0056b3;
         }
+
         .messages {
             margin-top: 2rem;
             text-align: left;
         }
+
         .message-box {
             background-color: #f1f1f1;
             padding: 1rem;
             border-radius: 4px;
             margin-bottom: 1rem;
         }
+
         .message-box h3 {
             margin: 0 0 0.5rem 0;
         }
+
         .message-box p {
             margin: 0;
         }
+
         .message-box .date {
             font-size: 0.8rem;
             color: #888;
         }
+
         .message-box form {
             margin-top: 0.5rem;
         }
+
         .message-box button {
             background-color: #dc3545;
             color: #fff;
@@ -116,11 +129,13 @@ $messageStmt->close();
             cursor: pointer;
             font-weight: 700;
         }
+
         .message-box button:hover {
             background-color: #c82333;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Welcome, <?php echo htmlspecialchars($_SESSION['user']['username'], ENT_QUOTES, 'UTF-8'); ?>!</h2>
@@ -129,10 +144,10 @@ $messageStmt->close();
         <a href="view_orders.php">View Orders</a>
         <a href="index.php?logout=true">Logout</a>
 
-        <?php if (!empty($messages)): ?>
+        <?php if (!empty($messages)) : ?>
             <div class="messages">
                 <h2>Deleted Items and Messages</h2>
-                <?php foreach ($messages as $message): ?>
+                <?php foreach ($messages as $message) : ?>
                     <div class="message-box">
                         <h3>Product: <?php echo htmlspecialchars($message['product_name'], ENT_QUOTES, 'UTF-8'); ?></h3>
                         <p><?php echo htmlspecialchars($message['message'], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -144,9 +159,10 @@ $messageStmt->close();
                     </div>
                 <?php endforeach; ?>
             </div>
-        <?php else: ?>
+        <?php else : ?>
             <p>No messages found.</p>
         <?php endif; ?>
     </div>
 </body>
+
 </html>

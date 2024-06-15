@@ -26,11 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $datetime = date('Y-m-d H:i:s', $expires);
                 setcookie('session_token', $token, [
                     'expires' => $expires,
-                    'path' => '/',
-                    'domain' => 'localhost', // Change to your domain
-                    'secure' => false, // Ensure HTTPS
-                    'httponly' => false, // Accessible only by the server
-                    'samesite' => 'Lax' // CSRF protection
+                    // 'path' => '/',
+                    // 'domain' => 'baastheowebsite.000webhostapp.com/', // Change to your domain
+                    // 'secure' => false, // Ensure HTTPS
+                    // 'httponly' => false, // Accessible only by the server
+                    // 'samesite' => 'Lax' // CSRF protection
                 ]);
 
                 $stmt = $conn->prepare("SELECT * FROM sessions WHERE user_id = ?");
@@ -48,6 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt->bind_param("sss", $_SESSION['user']['user_id'], $token, $datetime);
                     $stmt->execute();
                 }
+
+
 
                 switch ($_SESSION['role']) {
                     case 'admin':
@@ -172,7 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <h2>Login</h2>
-        <img src="images/logo_1.png" alt="Website Logo">
+        <img src="/Images/Logo_1.png" alt="Website Logo">
         <?php if (isset($message)) : ?>
             <p class="message"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
         <?php endif; ?>

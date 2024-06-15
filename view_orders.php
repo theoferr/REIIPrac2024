@@ -13,7 +13,7 @@ $merchant_id = $_SESSION['user']['user_id'];
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id']) && isset($_POST['status'])) {
     $order_id = $_POST['order_id'];
     $status = $_POST['status'];
-    
+
     $stmt = $conn->prepare("UPDATE orders SET status = ? WHERE order_id = ?");
     $stmt->bind_param("si", $status, $order_id);
 
@@ -49,6 +49,7 @@ $stmt->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,6 +61,7 @@ $stmt->close();
             background-color: #f8f9fa;
             margin: 0;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -70,13 +72,16 @@ $stmt->close();
             width: 100%;
             margin: 2rem auto;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         form {
             margin-bottom: 1rem;
         }
+
         label {
             margin-bottom: 0.5rem;
             font-weight: 700;
@@ -84,6 +89,7 @@ $stmt->close();
             text-align: left;
             display: block;
         }
+
         input[type="text"],
         select {
             width: calc(100% - 20px);
@@ -94,6 +100,7 @@ $stmt->close();
             font-size: 1rem;
             color: #495057;
         }
+
         input[type="submit"] {
             padding: 0.75rem 2rem;
             font-weight: 700;
@@ -104,17 +111,21 @@ $stmt->close();
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
         hr {
             margin: 2rem 0;
             border: none;
             border-top: 1px solid #ced4da;
         }
+
         .search-bar {
             margin-bottom: 2rem;
         }
+
         .search-bar input[type="text"] {
             width: calc(100% - 22px);
             padding: 0.75rem;
@@ -124,6 +135,7 @@ $stmt->close();
             font-size: 1rem;
             color: #495057;
         }
+
         .search-bar input[type="submit"] {
             padding: 0.75rem 2rem;
             font-weight: 700;
@@ -134,11 +146,13 @@ $stmt->close();
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         .search-bar input[type="submit"]:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>View Orders</h2>
@@ -148,8 +162,8 @@ $stmt->close();
                 <input type="submit" value="Search">
             </form>
         </div>
-        <?php if (!empty($orders)): ?>
-            <?php foreach ($orders as $order): ?>
+        <?php if (!empty($orders)) : ?>
+            <?php foreach ($orders as $order) : ?>
                 <div>
                     <p>Order ID: <?php echo htmlspecialchars($order['order_id'], ENT_QUOTES, 'UTF-8'); ?></p>
                     <p>User ID: <?php echo htmlspecialchars($order['user_id'], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -169,10 +183,11 @@ $stmt->close();
                 </div>
                 <hr>
             <?php endforeach; ?>
-        <?php else: ?>
+        <?php else : ?>
             <p>No orders found.</p>
         <?php endif; ?>
         <a href="merchant_dashboard.php">Back to Dashboard</a>
     </div>
 </body>
+
 </html>

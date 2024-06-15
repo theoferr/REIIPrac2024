@@ -247,7 +247,7 @@ $stmt->close();
 
 <body>
     <div class="sidebar">
-        <a href="shop.php"><img src="images/logo_1.png" alt="Website Logo"></a>
+        <a href="shop.php"><img src="/Images/Logo_1.png" alt="Website Logo"></a>
         <h3>Departments</h3>
         <ul>
             <li><a href="shop.php">All Departments</a></li>

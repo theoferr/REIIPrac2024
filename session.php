@@ -1,13 +1,15 @@
 <?php
 include 'practicalDB.php';
-
-function logout() {
+error_reporting(0);
+function logout()
+{
     session_start();
     session_destroy();
     setcookie('session_token', '', time() - 3600, '/');
 }
 
-function check_session() {
+function check_session()
+{
     global $conn;
     //echo '$_SESSION: '.json_encode($_SESSION).'<br>';
     //echo '$_COOKIE: '.json_encode($_COOKIE).'<br>';
@@ -47,7 +49,6 @@ function check_session() {
             }
         }
     }
-    
+
     return false;
 }
-?>

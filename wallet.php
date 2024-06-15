@@ -10,7 +10,8 @@ if (!isset($_SESSION['user'])) {
 $user_id = $_SESSION['user']['user_id'];
 
 // Function to fetch current balance
-function getCurrentBalance($conn, $user_id) {
+function getCurrentBalance($conn, $user_id)
+{
     $stmt = $conn->prepare("SELECT balance FROM wallets WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -58,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
             background-color: #f8f9fa;
             margin: 0;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -80,10 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
             width: 100%;
             margin: 2rem auto;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         label {
             margin-bottom: 0.5rem;
             font-weight: 700;
@@ -91,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
             text-align: left;
             display: block;
         }
+
         input[type="number"] {
             width: calc(100% - 20px);
             padding: 0.75rem;
@@ -100,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
             font-size: 1rem;
             color: #495057;
         }
+
         input[type="submit"] {
             padding: 0.75rem 2rem;
             font-weight: 700;
@@ -110,23 +117,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
         .links {
             margin-top: 2rem;
         }
+
         .links a {
             display: inline-block;
             margin-right: 1rem;
             color: #007bff;
             text-decoration: none;
         }
+
         .links a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Manage Funds</h2>
@@ -148,16 +160,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount'])) {
             event.preventDefault();
             const formData = new FormData(this);
             fetch('', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('current_balance').innerText = <?php echo json_encode($current_balance); ?>;
-                alert('Funds added successfully.');
-            })
-            .catch(error => console.error('Error:', error));
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('current_balance').innerText = <?php echo json_encode($current_balance); ?>;
+                    alert('Funds added successfully.');
+                })
+                .catch(error => console.error('Error:', error));
         });
     </script>
 </body>
+
 </html>

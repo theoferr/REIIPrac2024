@@ -35,6 +35,7 @@ $stmt->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,6 +47,7 @@ $stmt->close();
             background-color: #f8f9fa;
             margin: 0;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -56,58 +58,68 @@ $stmt->close();
             width: 100%;
             margin: 2rem auto;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         .order {
             margin-bottom: 2rem;
             text-align: left;
             border-bottom: 1px solid #ced4da;
             padding-bottom: 1rem;
         }
+
         .status-pending {
             color: #dc3545;
         }
+
         .status-shipped {
             color: #ffc107;
         }
+
         .status-delivered {
             color: #28a745;
         }
+
         .merchant-contact {
             margin-top: 1rem;
             font-style: italic;
         }
+
         .links {
             margin-top: 2rem;
         }
+
         .links a {
             display: inline-block;
             margin-right: 1rem;
             color: #007bff;
             text-decoration: none;
         }
+
         .links a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Your Orders</h2>
-        <?php foreach ($orders as $order): ?>
+        <?php foreach ($orders as $order) : ?>
             <div class="order">
                 <p>Order ID: <?= htmlspecialchars($order['order_id']); ?></p>
                 <p>Status: <span class="<?= 'status-' . strtolower($order['status']); ?>"><?= htmlspecialchars($order['status']); ?></span></p>
                 <p>Total: R<?= htmlspecialchars($order['total']); ?></p>
                 <p>Date: <?= htmlspecialchars(date('Y-m-d H:i', strtotime($order['created_at']))); ?></p>
-                <?php if ($order['status'] == 'pending'): ?>
+                <?php if ($order['status'] == 'pending') : ?>
                     <p class="merchant-contact">Contact Merchant: <?= htmlspecialchars($order['merchant_email']); ?></p>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
-        <?php if (empty($orders)): ?>
+        <?php if (empty($orders)) : ?>
             <p>No orders found.</p>
         <?php endif; ?>
         <div class="links">
@@ -116,4 +128,5 @@ $stmt->close();
         </div>
     </div>
 </body>
+
 </html>

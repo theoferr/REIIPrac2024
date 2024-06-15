@@ -128,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <div class="container">
         <h2>Sign Up</h2>
-        <img src="images/logo_1.png" alt="Website Logo">
+        <img src="/Images/Logo_1.png" alt="Website Logo">
         <?php if (isset($message)) : ?>
             <p class="message"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
         <?php endif; ?>
@@ -146,7 +146,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <select id="role" name="role">
                 <option value="customer">Customer</option>
                 <option value="merchant">Merchant</option>
-                <option value="admin">Admin</option>
+                <!--<option value="admin">Admin</option>-->
             </select>
 
             <input type="submit" value="Sign Up">

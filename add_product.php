@@ -39,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,6 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             align-items: center;
             height: 100vh;
         }
+
         .container {
             text-align: center;
             background: #fff;
@@ -63,21 +65,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             max-width: 400px;
             width: 100%;
         }
+
         h2 {
             margin-bottom: 1.5rem;
             color: #343a40;
         }
+
         form {
             display: flex;
             flex-direction: column;
             align-items: stretch;
         }
+
         label {
             margin-bottom: 0.5rem;
             font-weight: 700;
             color: #495057;
             text-align: left;
         }
+
         input[type="text"],
         input[type="number"],
         textarea,
@@ -89,6 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 1rem;
             color: #495057;
         }
+
         input[type="submit"] {
             padding: 0.75rem;
             font-weight: 700;
@@ -99,9 +106,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             cursor: pointer;
             transition: background-color 0.3s;
         }
+
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
         .message {
             margin-top: 1rem;
             font-weight: 700;
@@ -109,35 +118,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Add Product</h2>
-        <?php if (isset($message)): ?>
+        <?php if (isset($message)) : ?>
             <p class="message"><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></p>
         <?php endif; ?>
         <form method="POST" action="">
             <label for="name">Product Name:</label>
             <input type="text" id="name" name="name" required>
-            
+
             <label for="description">Description:</label>
             <textarea id="description" name="description" required></textarea>
 
             <label for="department_id">Department:</label>
             <select id="department_id" name="department_id" required>
-                <?php foreach ($departments as $department): ?>
+                <?php foreach ($departments as $department) : ?>
                     <option value="<?= $department['department_id'] ?>"><?= htmlspecialchars($department['name']) ?></option>
                 <?php endforeach; ?>
             </select>
 
             <label for="price">Price:</label>
             <input type="text" id="price" name="price" required>
-            
+
             <label for="stock">Stock:</label>
             <input type="number" id="stock" name="stock" required>
-            
+
             <label for="image_url">Image URL:</label>
             <input type="text" id="image_url" name="image_url">
-            
+
             <input type="submit" value="Add Product">
             <!--<button type="button" onclick="window.location.href='merchant_dashboard.php'">Back to Dashboard</button>-->
             <hr>
@@ -145,4 +155,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <a href="merchant_dashboard.php">Back to Dashboard</a>
     </div>
 </body>
+
 </html>

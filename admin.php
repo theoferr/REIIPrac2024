@@ -264,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
     <div class="container">
         <div class="top-bar">
             <h2>Admin Dashboard</h2>
-            <img src="images/logo_1.png" alt="Website Logo">
+            <img src="/Images/Logo_1.png" alt="Website Logo">
             <a href="view_all_products.php" class="view-all-products"><i class="fas fa-boxes"></i> View All Products</a>
         </div>
 

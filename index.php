@@ -1,8 +1,31 @@
 <?php
 include 'session.php';
 if (isset($_GET['logout'])) {
+    // session_destroy();
     logout();
 }
+
+// Specify domains from which requests are allowed
+header('Access-Control-Allow-Origin: *');
+
+// Specify which request methods are allowed
+header('Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS');
+
+// Additional headers which may be sent along with the CORS request
+header('Access-Control-Allow-Headers: X-Requested-With,Authorization,Content-Type');
+
+error_reporting(0);
+
+// TTL (Time To Live) of the cookie stored in the browser.
+ini_set('session.cookie_lifetime', 432000); // 5 days
+
+// On the server side, the garbage collector should delete
+// old sessions too, after the same TTL.
+ini_set('session.gc_maxlifetime', 432000); // 5 days
+
+// Fire the garbage collector only every 100 requests.
+ini_set('session.gc_probability', 1);
+ini_set('session.gc_divisor', 100);
 ?>
 
 <!DOCTYPE html>
@@ -73,7 +96,7 @@ if (isset($_GET['logout'])) {
 <body>
     <div class="container">
         <h2>Welcome to Baas Theo's Website</h2>
-        <img src="images/logo_1.png" alt="Website Logo">
+        <img src="/Images/Logo_1.png" alt="Website Logo">
         <a href="signup.php">Sign Up</a>
         <a href="login.php">Login</a>
     </div>
