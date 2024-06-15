@@ -26,14 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['order_id']) && isset($
     $stmt->close();
 }
 
-// Fetch orders for the merchant, including customer emails
+// Fetch orders for the merchant, excluding delivered orders
 $orders = [];
 if (isset($_GET['search_order_id'])) {
     $search_order_id = $_GET['search_order_id'];
-    $stmt = $conn->prepare("SELECT o.*, u.email FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id = ? AND o.order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
+    $stmt = $conn->prepare("SELECT o.*, u.email FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id = ? AND o.status != 'delivered' AND o.order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
     $stmt->bind_param("ii", $search_order_id, $merchant_id);
 } else {
-    $stmt = $conn->prepare("SELECT o.*, u.email FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
+    $stmt = $conn->prepare("SELECT o.*, u.email FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.status != 'delivered' AND o.order_id IN (SELECT order_id FROM order_items WHERE product_id IN (SELECT product_id FROM products WHERE merchant_id = ?))");
     $stmt->bind_param("i", $merchant_id);
 }
 
@@ -176,7 +176,6 @@ $stmt->close();
                         <select id="status" name="status">
                             <option value="pending" <?php if ($order['status'] == 'pending') echo 'selected'; ?>>Pending</option>
                             <option value="shipped" <?php if ($order['status'] == 'shipped') echo 'selected'; ?>>Shipped</option>
-                            <!-- <option value="delivered" <?php if ($order['status'] == 'delivered') echo 'selected'; ?>>Delivered</option> -->
                         </select><br><br>
                         <input type="submit" value="Update Status">
                     </form>

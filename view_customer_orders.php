@@ -56,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mark_delivered'])) {
 
 $stmt->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -97,6 +96,8 @@ $stmt->close();
             text-align: left;
             border-bottom: 1px solid #ced4da;
             padding-bottom: 1rem;
+            position: relative;
+            /* Position relative for absolute positioning of the button */
         }
 
         .status-pending {
@@ -132,7 +133,14 @@ $stmt->close();
         }
 
         form {
-            margin-bottom: 1rem;
+            position: absolute;
+            /* Absolute positioning */
+            right: 0;
+            /* Align to the right */
+            top: 50%;
+            /* Center vertically */
+            transform: translateY(-50%);
+            /* Adjust vertical alignment */
         }
 
         input[type="submit"] {
@@ -166,7 +174,7 @@ $stmt->close();
                         <input type="hidden" name="order_id" value="<?= $order['order_id']; ?>">
                         <input type="hidden" name="merchant_id" value="<?= $order['merchant_id']; ?>">
                         <input type="hidden" name="total" value="<?= $order['total']; ?>">
-                        <button type="submit" name="mark_delivered">Mark as Delivered</button>
+                        <input type="submit" name="mark_delivered" value="Mark as Delivered">
                     </form>
                 <?php endif; ?>
             </div>
