@@ -142,8 +142,8 @@ $messageStmt->close();
         <a href="add_product.php">Add Product</a>
         <a href="manage_products.php">Manage Products</a>
         <a href="view_orders.php">View Orders</a>
+        <a href="withdraw.php">Withdraw Funds</a> <!-- Added withdraw button -->
         <a href="index.php?logout=true">Logout</a>
-
         <?php if (!empty($messages)) : ?>
             <div class="messages">
                 <h2>Deleted Items and Messages</h2>

@@ -176,7 +176,7 @@ $stmt->close();
                         <select id="status" name="status">
                             <option value="pending" <?php if ($order['status'] == 'pending') echo 'selected'; ?>>Pending</option>
                             <option value="shipped" <?php if ($order['status'] == 'shipped') echo 'selected'; ?>>Shipped</option>
-                            <option value="delivered" <?php if ($order['status'] == 'delivered') echo 'selected'; ?>>Delivered</option>
+                            <!-- <option value="delivered" <?php if ($order['status'] == 'delivered') echo 'selected'; ?>>Delivered</option> -->
                         </select><br><br>
                         <input type="submit" value="Update Status">
                     </form>
