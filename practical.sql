@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 15, 2024 at 07:21 PM
+-- Generation Time: Jun 16, 2024 at 08:36 PM
 -- Server version: 10.5.20-MariaDB
 -- PHP Version: 7.3.33
 
@@ -139,7 +139,7 @@ INSERT INTO `orders` (`order_id`, `user_id`, `total`, `status`, `created_at`) VA
 (39, 44, 152000.00, 'delivered', '2024-06-15 17:57:27'),
 (40, 44, 104000.00, 'delivered', '2024-06-15 18:35:57'),
 (41, 44, 89998.00, 'delivered', '2024-06-15 18:38:24'),
-(42, 44, 152000.00, 'pending', '2024-06-15 19:01:33');
+(42, 44, 152000.00, 'shipped', '2024-06-15 19:01:33');
 
 -- --------------------------------------------------------
 
@@ -275,8 +275,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `user_id`, `session_token`, `expires_at`) VALUES
-(1, 18, '823a86ad5fefd9baa3e2f086153d0cbe1319e5210bb6e9b21fee0597a254bef7', '2024-06-15 12:57:43'),
-(2, 19, '8860a9cc7ebe4d67b18fbafbbd8c8635c158d8696d0875975f89ab6b8b3b1b72', '2024-06-15 18:04:50'),
+(1, 18, 'a5767547546f91edc2e22a2ddc806c01b6d6263fa55334c721868e7bd058ebb3', '2024-06-16 14:44:35'),
+(2, 19, '5f19d54b737333f3658ec2beb8d9caf0a33538a72a551bcc144df341f76726a9', '2024-06-16 14:45:56'),
 (3, 20, '58744487e725c14cf97e986eff51bcb1d5d4b4e2bebe9a1745f9081bbaf18438', '2024-06-15 19:36:54'),
 (4, 21, 'e0ac3f19dc636002e64d2621111840e22e69d654f2dc512591ee8c9591eea5b1', '2024-06-13 12:53:42'),
 (5, 22, '2232892939d58bbe7132306ccc5c83dbb6ef2af001551cf636a4f45cfa98c07b', '2024-06-13 13:07:12'),
@@ -293,8 +293,8 @@ INSERT INTO `sessions` (`session_id`, `user_id`, `session_token`, `expires_at`) 
 (16, 40, '642dc8651af918c577456a8be8bb98d4f7c7347f8c5974090c324dd7af49881e', '2024-06-15 13:31:44'),
 (17, 41, '6f34d52f2cf702b5e411eb9e36731d67c46ee38ed9ee149aec8f55d7741d6d1b', '2024-06-15 13:35:27'),
 (18, 42, 'd81e0a42621ea198b1c224ed40b01eae637a59bb68f33a8caa561942dffacc61', '2024-06-15 18:26:17'),
-(19, 43, 'a573562f1b37b7951e28ffc59be6aa129d6f9dfe8f1ba6955ec355b6d7d0bfd2', '2024-06-15 20:02:11'),
-(20, 44, '89a1db5b4b5feca38fe57bf155b86533715f5f82b78129cd164d190d7f2b0ff6', '2024-06-15 20:01:19');
+(19, 43, 'ab0952b925c9d17ac3d908854f330a2dd8b0a943a74b1bc206e4b3b1f1363401', '2024-06-16 14:42:09'),
+(20, 44, 'fcc85a0710bd945244b9b3db8f52d40e209d545fdac9bdc40e9e9905afdbedb0', '2024-06-15 22:24:32');
 
 -- --------------------------------------------------------
 

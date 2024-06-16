@@ -1,4 +1,9 @@
+George Oosthuizen 38041898
+Theo Ferreira 37262416
+Jonathan Vorster 38204533
+
 Everything works, go https://baastheowebsite.000webhostapp.com/ to view hosted website.
+
 Hosting service is not the best so you might get fished or something in that line and if it does not work
 then try another browser or your phone or something.
 
